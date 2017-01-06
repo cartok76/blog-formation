@@ -5,7 +5,6 @@
  * Date: 05/01/2017
  * Time: 14:23
  */
-// Connexion à la BDD
 
 class Users
 {
@@ -15,33 +14,43 @@ class Users
     public $password;
     public $nom;
     public $prenom;
+    private $instance;
 
     public function __construct($pseudo, $email, $password, $nom, $prenom)
     {
         $this->pseudo = $pseudo;
         $this->email = $email;
-        $this->password = $password;
+        $this->password = hash('sha1', $password);
         $this->nom = $nom;
         $this->prenom = $prenom;
 
-        /* public function password () {
-             $pass_hache = sha1($_POST['password']);
-             $password -> password;
-         }*/
+        $this -> instance = new Bdd ();
+        $this -> instance = $this -> instance -> connect();
+
+
 
     }
+     public function inscription (){
 
-/*$sql = "INSERT INTO user (pseudo, email, password, nom, prenom)
-    VALUES ('" . $_POST['pseudo'] . "','" . $_POST['email'] . "','" . $_POST['password'] . "','" . $_POST['nom'] . "','" . $_POST['prenom'] . "')";
+        $addUser = $this -> instance -> prepare ("INSERT INTO user (pseudo, email, password, nom, prenom) VALUES (:pseudo, :email, :password, :nom, :prenom)");
+         $insertSuccess = $addUser ->execute (array(
+            "pseudo" => $this -> pseudo,
+            "email" => $this -> email,
+            "password" => $this -> password,
+            "nom" => $this -> nom,
+            "prenom" => $this -> prenom
+        ));
 
-$insertSuccess = $instance->exec($sql);
 
-if ($insertSuccess)
-{
-$message = "Utilisateur ajouté !";
-}
+        if ($insertSuccess)
+        {
+        $message = "Utilisateur ajouté !";
+        }
 
-else {
-    $message = "L'utilisateur n'a pas été ajouté !";
-}*/
+        else {
+            $message = "L'utilisateur n'a pas été ajouté !";
+        }
+
+        return $message;
+    }
 }
